@@ -147,10 +147,10 @@ public class GIFAsyncAnimatedImage {
             group.enter()
 
             frameSource.frameAsync(at: i) { [weak self] result in
-                self?.group.leave()
                 if let imageRef = result {
                     images.append(KingfisherWrapper.image(cgImage: imageRef, scale: options.scale, refImage: nil))
                 }
+                self?.group.leave()
             }
             if frameCount == 1 {
                 gifDuration = .infinity
