@@ -62,6 +62,8 @@ public protocol CacheSerializer: Sendable {
     /// By default, it is `false`, and the actual processed image is assumed to be serialized to and later deserialized
     /// from the disk. That means the processed version of the image is stored and loaded.
     var originalDataUsed: Bool { get }
+
+    func imageAsync(with data: Data, options: KingfisherParsedOptionsInfo, completion: ((KFCrossPlatformImage?) -> Void)?)
 }
 
 public extension CacheSerializer {
@@ -118,5 +120,9 @@ public struct DefaultCacheSerializer: CacheSerializer {
     
     public func image(with data: Data, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
         return KingfisherWrapper.image(data: data, options: options.imageCreatingOptions)
+    }
+
+    public func imageAsync(with data: Data, options: KingfisherParsedOptionsInfo, completion: ((KFCrossPlatformImage?) -> Void)?) {
+        
     }
 }

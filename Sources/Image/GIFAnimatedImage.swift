@@ -131,6 +131,43 @@ public class GIFAnimatedImage {
     }
 }
 
+public class GIFAsyncAnimatedImage {
+    var images: [KFCrossPlatformImage] = []
+    var duration: TimeInterval = 0
+    private let group = dispatch_group_t()
+
+    public func prepareImages(from frameSource: ImageFrameSource, options: ImageCreatingOptions, completion: (() -> Void)?) {
+        let frameCount = frameSource.frameCount
+        var images = [KFCrossPlatformImage]()
+        var gifDuration = 0.0
+
+        for i in 0 ..< frameCount {
+            group.enter()
+
+            frameSource.frameAsync(at: i) { [weak self] result in
+                self?.group.leave()
+                if let imageRef = result {
+                    images.append(KingfisherWrapper.image(cgImage: imageRef, scale: options.scale, refImage: nil))
+                }
+            }
+            if frameCount == 1 {
+                gifDuration = .infinity
+            } else {
+                // Get current animated GIF frame duration
+                gifDuration += frameSource.duration(at: i)
+            }
+
+            if options.onlyFirstFrame { break }
+        }
+        // notify
+        self.group.notify(queue: .main) {
+            self.images = images
+            self.duration = gifDuration
+            completion?()
+        }
+    }
+}
+
 /// Represents a frame source for an animated image.
 public protocol ImageFrameSource {
     
@@ -148,6 +185,8 @@ public protocol ImageFrameSource {
     
     /// Retrieves the duration at a specific index. If the index is invalid, implementors should return `0.0`.
     func duration(at index: Int) -> TimeInterval
+
+    func frameAsync(at index: Int, completon: ((CGImage?) -> Void)?)
 }
 
 public extension ImageFrameSource {
@@ -182,6 +221,10 @@ struct CGImageFrameSource: ImageFrameSource {
 
     func duration(at index: Int) -> TimeInterval {
         return GIFAnimatedImage.getFrameDuration(from: imageSource, at: index)
+    }
+
+    func frameAsync(at index: Int, completon: ((CGImage?) -> Void)?) {
+
     }
 }
 

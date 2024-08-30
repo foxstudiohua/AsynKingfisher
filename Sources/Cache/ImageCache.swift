@@ -421,6 +421,10 @@ open class ImageCache: @unchecked Sendable {
             func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
                 return nil
             }
+
+            func processAsync(item: ImageProcessItem, options: KingfisherParsedOptionsInfo, handle: ((KFCrossPlatformImage?) -> Void)?) {
+
+            }
         }
         
         let options = KingfisherParsedOptionsInfo([
@@ -688,12 +692,17 @@ open class ImageCache: @unchecked Sendable {
             do {
                 var image: KFCrossPlatformImage? = nil
                 if let data = try self.diskStorage.value(forKey: computedKey, extendingExpiration: options.diskCacheAccessExtendingExpiration) {
-                    image = options.cacheSerializer.image(with: data, options: options)
+                    options.cacheSerializer.imageAsync(with: data, options: options) { resImg in
+
+                        image = resImg
+
+                        if options.backgroundDecode {
+                            image = image?.kf.decoded(scale: options.scaleFactor)
+                        }
+                        callbackQueue.execute { [image] in completionHandler(.success(image)) }
+                    }
                 }
-                if options.backgroundDecode {
-                    image = image?.kf.decoded(scale: options.scaleFactor)
-                }
-                callbackQueue.execute { [image] in completionHandler(.success(image)) }
+
             } catch let error as KingfisherError {
                 callbackQueue.execute { completionHandler(.failure(error)) }
             } catch {

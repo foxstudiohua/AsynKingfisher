@@ -373,6 +373,65 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         #endif
     }
 
+    public static func animatedImageAsync(source: ImageFrameSource, options: ImageCreatingOptions, baseImage: KFCrossPlatformImage? = nil, completion: ((KFCrossPlatformImage?) -> Void)?) {
+        #if os(macOS)
+        guard let animatedImage = GIFAnimatedImage(from: source, options: options) else {
+            return nil
+        }
+        var image: KFCrossPlatformImage?
+        if options.onlyFirstFrame {
+            image = animatedImage.images.first
+        } else {
+            if let baseImage = baseImage {
+                image = baseImage
+            } else {
+                image = animatedImage.images.first
+            }
+            var kf = image?.kf
+            kf?.images = animatedImage.images
+            kf?.duration = animatedImage.duration
+        }
+        image?.kf.animatedImageData = source.data
+        image?.kf.imageFrameCount = source.frameCount
+        image?.kf.frameSource = source
+        return image
+        #else
+
+        var image: KFCrossPlatformImage?
+        if options.preloadAll || options.onlyFirstFrame {
+            // Use `images` image if you want to preload all animated data
+            let asyncAnimateImage = GIFAsyncAnimatedImage()
+            asyncAnimateImage.prepareImages(from: source, options: options) {
+                if options.onlyFirstFrame {
+                    image = asyncAnimateImage.images.first
+                } else {
+                    let duration = options.duration <= 0.0 ? asyncAnimateImage.duration : options.duration
+                    image = .animatedImage(with: asyncAnimateImage.images, duration: duration)
+                }
+                image?.kf.animatedImageData = source.data
+                image?.kf.imageFrameCount = source.frameCount
+                completion?(image)
+            }
+        } else {
+            if let baseImage = baseImage {
+                image = baseImage
+            } else {
+                guard let firstFrame = source.frame(at: 0) else {
+                    completion?(nil)
+                    return
+                }
+                image = KFCrossPlatformImage(cgImage: firstFrame, scale: options.scale, orientation: .up)
+            }
+            var kf = image?.kf
+            kf?.frameSource = source
+            kf?.animatedImageData = source.data
+
+            image?.kf.imageFrameCount = source.frameCount
+            completion?(image)
+        }
+        #endif
+    }
+
     /// Creates an image from provided data and options. Supported formats include `.JPEG`, `.PNG`, or `.GIF`. For 
     /// other image formats, the system's image initializer will be used. If no image object can be created from the
     /// given `data`, `nil` will be returned.

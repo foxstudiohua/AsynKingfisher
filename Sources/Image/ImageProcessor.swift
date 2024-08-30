@@ -73,6 +73,8 @@ public protocol ImageProcessor: Sendable {
     /// > Important: Most processors only support CG-based images. The watchOS is not supported for processors
     /// > containing a filter, and the input image will be returned directly on watchOS.
     func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage?
+
+    func processAsync(item: ImageProcessItem, options: KingfisherParsedOptionsInfo, handle: ((KFCrossPlatformImage?) -> Void)?)
 }
 
 extension ImageProcessor {
@@ -110,6 +112,10 @@ struct GeneralProcessor: ImageProcessor {
     func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
         return p(item, options)
     }
+
+    func processAsync(item: ImageProcessItem, options: KingfisherParsedOptionsInfo, handle: ((KFCrossPlatformImage?) -> Void)?) {
+
+    }
 }
 
 /// The default processor. It converts the input data into a valid image.
@@ -137,6 +143,10 @@ public struct DefaultImageProcessor: ImageProcessor {
         case .data(let data):
             return KingfisherWrapper.image(data: data, options: options.imageCreatingOptions)
         }
+    }
+
+    public func processAsync(item: ImageProcessItem, options: KingfisherParsedOptionsInfo, handle: ((KFCrossPlatformImage?) -> Void)?) {
+
     }
 }
 
@@ -221,6 +231,10 @@ public struct BlendImageProcessor: ImageProcessor {
         case .data:
             return (DefaultImageProcessor.default |> self).process(item: item, options: options)
         }
+    }
+
+    public func processAsync(item: ImageProcessItem, options: KingfisherParsedOptionsInfo, handle: ((KFCrossPlatformImage?) -> Void)?) {
+
     }
 }
 #endif
@@ -426,6 +440,10 @@ public struct RoundCornerImageProcessor: ImageProcessor {
             return (DefaultImageProcessor.default |> self).process(item: item, options: options)
         }
     }
+
+    public func processAsync(item: ImageProcessItem, options: KingfisherParsedOptionsInfo, handle: ((KFCrossPlatformImage?) -> Void)?) {
+
+    }
 }
 
 /// Represents a border to be added to the image.
@@ -495,6 +513,10 @@ public struct BorderImageProcessor: ImageProcessor {
             return (DefaultImageProcessor.default |> self).process(item: item, options: options)
         }
     }
+
+    public func processAsync(item: ImageProcessItem, options: KingfisherParsedOptionsInfo, handle: ((KFCrossPlatformImage?) -> Void)?) {
+
+    }
 }
 
 /// Represents how a size of content adjusts itself to fit a target size.
@@ -555,6 +577,10 @@ public struct ResizingImageProcessor: ImageProcessor {
             return (DefaultImageProcessor.default |> self).process(item: item, options: options)
         }
     }
+
+    public func processAsync(item: ImageProcessItem, options: KingfisherParsedOptionsInfo, handle: ((KFCrossPlatformImage?) -> Void)?) {
+
+    }
 }
 
 /// Processor for adding a blur effect to images. 
@@ -585,6 +611,10 @@ public struct BlurImageProcessor: ImageProcessor {
         case .data:
             return (DefaultImageProcessor.default |> self).process(item: item, options: options)
         }
+    }
+
+    public func processAsync(item: ImageProcessItem, options: KingfisherParsedOptionsInfo, handle: ((KFCrossPlatformImage?) -> Void)?) {
+
     }
 }
 
@@ -622,6 +652,10 @@ public struct OverlayImageProcessor: ImageProcessor {
             return (DefaultImageProcessor.default |> self).process(item: item, options: options)
         }
     }
+
+    public func processAsync(item: ImageProcessItem, options: KingfisherParsedOptionsInfo, handle: ((KFCrossPlatformImage?) -> Void)?) {
+
+    }
 }
 
 /// Processor for tinting images with color.
@@ -652,6 +686,10 @@ public struct TintImageProcessor: ImageProcessor {
         case .data:
             return (DefaultImageProcessor.default |> self).process(item: item, options: options)
         }
+    }
+
+    public func processAsync(item: ImageProcessItem, options: KingfisherParsedOptionsInfo, handle: ((KFCrossPlatformImage?) -> Void)?) {
+
     }
 }
 
@@ -700,6 +738,10 @@ public struct ColorControlsProcessor: ImageProcessor {
             return (DefaultImageProcessor.default |> self).process(item: item, options: options)
         }
     }
+
+    public func processAsync(item: ImageProcessItem, options: KingfisherParsedOptionsInfo, handle: ((KFCrossPlatformImage?) -> Void)?) {
+
+    }
 }
 
 /// Processor for applying black and white effect to images. Only CG-based images are supported.
@@ -717,6 +759,10 @@ public struct BlackWhiteProcessor: ImageProcessor {
     public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
         return ColorControlsProcessor(brightness: 0.0, contrast: 1.0, saturation: 0.0, inputEV: 0.7)
             .process(item: item, options: options)
+    }
+
+    public func processAsync(item: ImageProcessItem, options: KingfisherParsedOptionsInfo, handle: ((KFCrossPlatformImage?) -> Void)?) {
+
     }
 }
 
@@ -772,6 +818,10 @@ public struct CroppingImageProcessor: ImageProcessor {
         case .data: return (DefaultImageProcessor.default |> self).process(item: item, options: options)
         }
     }
+
+    public func processAsync(item: ImageProcessItem, options: KingfisherParsedOptionsInfo, handle: ((KFCrossPlatformImage?) -> Void)?) {
+
+    }
 }
 
 /// Processor for downsampling an image. 
@@ -815,6 +865,10 @@ public struct DownsamplingImageProcessor: ImageProcessor {
         case .data(let data):
             return KingfisherWrapper.downsampledImage(data: data, to: size, scale: options.scaleFactor)
         }
+    }
+
+    public func processAsync(item: ImageProcessItem, options: KingfisherParsedOptionsInfo, handle: ((KFCrossPlatformImage?) -> Void)?) {
+
     }
 }
 

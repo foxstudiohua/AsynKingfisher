@@ -34,20 +34,22 @@ final class ImageDataProcessor: Sendable {
     let data: Data
     let callbacks: [SessionDataTask.TaskCallback]
     let queue: CallbackQueue
+    let taskUrlStr: String
 
     // Note: We have an optimization choice there, to reduce queue dispatch by checking callback
     // queue settings in each option...
     let onImageProcessed = Delegate<(Result<KFCrossPlatformImage, KingfisherError>, SessionDataTask.TaskCallback), Void>()
 
-    init(data: Data, callbacks: [SessionDataTask.TaskCallback], processingQueue: CallbackQueue?) {
+    init(data: Data, callbacks: [SessionDataTask.TaskCallback], processingQueue: CallbackQueue?, taskUrlStr: String = "") {
         self.data = data
         self.callbacks = callbacks
         self.queue = processingQueue ?? sharedProcessingQueue
+        self.taskUrlStr = taskUrlStr
     }
 
     func process() {
         queue.execute {
-            self.doProcess()
+            self.doProcessAsyn()
         }
     }
 
@@ -71,6 +73,44 @@ final class ImageDataProcessor: Sendable {
                 result = .failure(error)
             }
             onImageProcessed.call((result, callback))
+        }
+    }
+
+    private func doProcessAsyn() {
+        var processedImages = [String: KFCrossPlatformImage]()
+        for callback in callbacks {
+            let processor = callback.options.processor
+            var image = processedImages[processor.identifier]
+            if image == nil {
+                var mOptions = callback.options
+                mOptions.serialCacheKey = self.taskUrlStr.computedKey(with: processor.identifier)
+                processor.processAsync(item: .data(data), options: mOptions, handle: { [weak self] resImg in
+                    image = resImg
+                    processedImages[processor.identifier] = image
+                    let result: Result<KFCrossPlatformImage, KingfisherError>
+                    if let image = image {
+                        let finalImage = callback.options.backgroundDecode ? image.kf.decoded : image
+                        result = .success(finalImage)
+                    } else {
+                        let error = KingfisherError.processorError(
+                            reason: .processingFailed(processor: processor, item: .data(self!.data)))
+                        result = .failure(error)
+                    }
+                    self?.onImageProcessed.call((result, callback))
+                })
+
+            } else {
+                let result: Result<KFCrossPlatformImage, KingfisherError>
+                if let image = image {
+                    let finalImage = callback.options.backgroundDecode ? image.kf.decoded : image
+                    result = .success(finalImage)
+                } else {
+                    let error = KingfisherError.processorError(
+                        reason: .processingFailed(processor: processor, item: .data(data)))
+                    result = .failure(error)
+                }
+                onImageProcessed.call((result, callback))
+            }
         }
     }
 }

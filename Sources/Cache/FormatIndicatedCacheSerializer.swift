@@ -135,4 +135,8 @@ public struct FormatIndicatedCacheSerializer: CacheSerializer {
     public func image(with data: Data, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
         return KingfisherWrapper.image(data: data, options: options.imageCreatingOptions)
     }
+
+    public func imageAsync(with data: Data, options: KingfisherParsedOptionsInfo, completion: ((KFCrossPlatformImage?) -> Void)?) {
+
+    }
 }

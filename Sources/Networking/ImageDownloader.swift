@@ -434,7 +434,7 @@ open class ImageDownloader: @unchecked Sendable {
             // Download finished. Now process the data to an image.
             case .success(let (data, response)):
                 let processor = ImageDataProcessor(
-                    data: data, callbacks: callbacks, processingQueue: context.options.processingQueue
+                    data: data, callbacks: callbacks, processingQueue: context.options.processingQueue, taskUrlStr: context.url.absoluteString
                 )
                 processor.onImageProcessed.delegate(on: self) { (self, done) in
                     // `onImageProcessed` will be called for `callbacks.count` times, with each
