@@ -42,8 +42,6 @@ public struct ImageCreatingOptions {
     /// For an animated image, indicates whether only the first image should be
     /// loaded as a static image. It is useful for previewing an animated image.
     public var onlyFirstFrame: Bool
-    
-    public var serialCacheKey: String = ""
 
     /// Creates an `ImageCreatingOptions` object.
     ///

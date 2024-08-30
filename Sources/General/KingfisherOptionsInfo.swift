@@ -397,7 +397,6 @@ public struct KingfisherParsedOptionsInfo: Sendable {
     public var alternativeSources: [Source]? = nil
     public var retryStrategy: RetryStrategy? = nil
     public var lowDataModeSource: Source? = nil
-    public var serialCacheKey: String = ""
 
     var onDataReceived: [DataReceivingSideEffect]? = nil
     

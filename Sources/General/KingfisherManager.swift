@@ -605,10 +605,7 @@ public class KingfisherManager: @unchecked Sendable {
                     if image.kf.imageFrameCount != nil && image.kf.imageFrameCount != 1, let data = image.kf.animatedImageData {
                         // Always recreate animated image representation since it is possible to be loaded in different options.
                         // https://github.com/onevcat/Kingfisher/issues/1923
-                        var mOptions = options
-                        mOptions.serialCacheKey = key
-
-                        options.processor.processAsync(item: .data(data), options: mOptions) { resImg in
+                        options.processor.processAsync(item: .data(data), options: options) { resImg in
                             image = resImg ?? .init()
                             //
                             if let modifier = options.imageModifier {

@@ -437,7 +437,7 @@ open class ImageDownloader: @unchecked Sendable {
             case .success(let (data, response)):
                 let taskKey = context.url.absoluteString
                 let processor = ImageDataProcessor(
-                    data: data, callbacks: callbacks, processingQueue: context.options.processingQueue, taskUrlStr: taskKey
+                    data: data, callbacks: callbacks, processingQueue: context.options.processingQueue
                 )
                 // keep reference to processor before it async finish job, otherwise it will be release earlier
                 self.imageDataProcessorMap[taskKey] = processor

@@ -34,17 +34,15 @@ final class ImageDataProcessor: Sendable {
     let data: Data
     let callbacks: [SessionDataTask.TaskCallback]
     let queue: CallbackQueue
-    let taskUrlStr: String
 
     // Note: We have an optimization choice there, to reduce queue dispatch by checking callback
     // queue settings in each option...
     let onImageProcessed = Delegate<(Result<KFCrossPlatformImage, KingfisherError>, SessionDataTask.TaskCallback), Void>()
 
-    init(data: Data, callbacks: [SessionDataTask.TaskCallback], processingQueue: CallbackQueue?, taskUrlStr: String = "") {
+    init(data: Data, callbacks: [SessionDataTask.TaskCallback], processingQueue: CallbackQueue?) {
         self.data = data
         self.callbacks = callbacks
         self.queue = processingQueue ?? sharedProcessingQueue
-        self.taskUrlStr = taskUrlStr
     }
 
     func process() {
@@ -86,9 +84,7 @@ final class ImageDataProcessor: Sendable {
             let processor = callback.options.processor
             var image = processedImages[processor.identifier]
             if image == nil {
-                var mOptions = callback.options
-                mOptions.serialCacheKey = taskUrlStr
-                processor.processAsync(item: .data(data), options: mOptions, handle: { [weak self] resImg in
+                processor.processAsync(item: .data(data), options: callback.options, handle: { [weak self] resImg in
                     image = resImg
                     processedImages[processor.identifier] = image
                     let result: Result<KFCrossPlatformImage, KingfisherError>

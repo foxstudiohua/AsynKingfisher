@@ -692,9 +692,7 @@ open class ImageCache: @unchecked Sendable {
             do {
                 var image: KFCrossPlatformImage? = nil
                 if let data = try self.diskStorage.value(forKey: computedKey, extendingExpiration: options.diskCacheAccessExtendingExpiration) {
-                    var mOptions = options
-                    mOptions.serialCacheKey = key // 这是帧的缓存key, 可以和disk上的不同
-                    options.cacheSerializer.imageAsync(with: data, options: mOptions) { resImg in
+                    options.cacheSerializer.imageAsync(with: data, options: options) { resImg in
 
                         image = resImg
 
