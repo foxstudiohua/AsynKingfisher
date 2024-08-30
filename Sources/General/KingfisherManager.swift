@@ -605,21 +605,41 @@ public class KingfisherManager: @unchecked Sendable {
                     if image.kf.imageFrameCount != nil && image.kf.imageFrameCount != 1, let data = image.kf.animatedImageData {
                         // Always recreate animated image representation since it is possible to be loaded in different options.
                         // https://github.com/onevcat/Kingfisher/issues/1923
-                        image = options.processor.process(item: .data(data), options: options) ?? .init()
+                        var mOptions = options
+                        mOptions.serialCacheKey = key.computedKey(with: options.processor.identifier)
+
+                        options.processor.processAsync(item: .data(data), options: mOptions) { resImg in
+                            image = resImg ?? .init()
+                            //
+                            if let modifier = options.imageModifier {
+                                image = modifier.modify(image)
+                            }
+                            let value = result.map {
+                                RetrieveImageResult(
+                                    image: image,
+                                    cacheType: $0.cacheType,
+                                    source: source,
+                                    originalSource: context.originalSource,
+                                    data: { [image] in options.cacheSerializer.data(with: image, original: nil) }
+                                )
+                            }
+                            completionHandler(value)
+                        }
+                    } else {
+                        if let modifier = options.imageModifier {
+                            image = modifier.modify(image)
+                        }
+                        let value = result.map {
+                            RetrieveImageResult(
+                                image: image,
+                                cacheType: $0.cacheType,
+                                source: source,
+                                originalSource: context.originalSource,
+                                data: { [image] in options.cacheSerializer.data(with: image, original: nil) }
+                            )
+                        }
+                        completionHandler(value)
                     }
-                    if let modifier = options.imageModifier {
-                        image = modifier.modify(image)
-                    }
-                    let value = result.map {
-                        RetrieveImageResult(
-                            image: image,
-                            cacheType: $0.cacheType,
-                            source: source,
-                            originalSource: context.originalSource,
-                            data: { [image] in options.cacheSerializer.data(with: image, original: nil) }
-                        )
-                    }
-                    completionHandler(value)
                 }
                 
                 result.match { cacheResult in
