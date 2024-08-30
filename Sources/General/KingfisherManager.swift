@@ -151,7 +151,8 @@ public class KingfisherManager: @unchecked Sendable {
     }
 
     private let processingQueue: CallbackQueue
-    
+    public var frameImageCache = NSCache<NSString, CGImage>()
+
     private convenience init() {
         self.init(downloader: .default, cache: .default)
     }
