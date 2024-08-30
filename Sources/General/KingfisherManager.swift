@@ -606,7 +606,7 @@ public class KingfisherManager: @unchecked Sendable {
                         // Always recreate animated image representation since it is possible to be loaded in different options.
                         // https://github.com/onevcat/Kingfisher/issues/1923
                         var mOptions = options
-                        mOptions.serialCacheKey = key.computedKey(with: options.processor.identifier)
+                        mOptions.serialCacheKey = key
 
                         options.processor.processAsync(item: .data(data), options: mOptions) { resImg in
                             image = resImg ?? .init()

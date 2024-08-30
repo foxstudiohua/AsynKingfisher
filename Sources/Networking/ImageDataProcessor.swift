@@ -83,7 +83,7 @@ final class ImageDataProcessor: Sendable {
             var image = processedImages[processor.identifier]
             if image == nil {
                 var mOptions = callback.options
-                mOptions.serialCacheKey = self.taskUrlStr.computedKey(with: processor.identifier)
+                mOptions.serialCacheKey = taskUrlStr
                 processor.processAsync(item: .data(data), options: mOptions, handle: { [weak self] resImg in
                     image = resImg
                     processedImages[processor.identifier] = image
