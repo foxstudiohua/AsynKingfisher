@@ -43,6 +43,8 @@ public struct ImageCreatingOptions {
     /// loaded as a static image. It is useful for previewing an animated image.
     public var onlyFirstFrame: Bool
     
+    public var serialCacheKey: String = ""
+
     /// Creates an `ImageCreatingOptions` object.
     ///
     /// - Parameters:
