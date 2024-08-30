@@ -53,6 +53,10 @@ final class ImageDataProcessor: Sendable {
         }
     }
 
+    deinit {
+        debugPrint(">>>deinit ImageDataProcessor")
+    }
+
     private func doProcess() {
         var processedImages = [String: KFCrossPlatformImage]()
         for callback in callbacks {
@@ -96,6 +100,7 @@ final class ImageDataProcessor: Sendable {
                             reason: .processingFailed(processor: processor, item: .data(self!.data)))
                         result = .failure(error)
                     }
+                    debugPrint(">>>async call when image finish processed.")
                     self?.onImageProcessed.call((result, callback))
                 })
 

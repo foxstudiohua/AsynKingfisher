@@ -411,6 +411,8 @@ open class ImageDownloader: @unchecked Sendable {
         }
     }
 
+    private var imageDataProcessorMap: [String: ImageDataProcessor] = [:]
+
     private func startDownloadTask(
         context: DownloadingContext,
         callback: SessionDataTask.TaskCallback
@@ -433,9 +435,12 @@ open class ImageDownloader: @unchecked Sendable {
             switch result {
             // Download finished. Now process the data to an image.
             case .success(let (data, response)):
+                let taskKey = context.url.absoluteString
                 let processor = ImageDataProcessor(
-                    data: data, callbacks: callbacks, processingQueue: context.options.processingQueue, taskUrlStr: context.url.absoluteString
+                    data: data, callbacks: callbacks, processingQueue: context.options.processingQueue, taskUrlStr: taskKey
                 )
+                // keep reference to processor before it async finish job, otherwise it will be release earlier
+                self.imageDataProcessorMap[taskKey] = processor
                 processor.onImageProcessed.delegate(on: self) { (self, done) in
                     // `onImageProcessed` will be called for `callbacks.count` times, with each
                     // `SessionDataTask.TaskCallback` as the input parameter.
@@ -447,6 +452,7 @@ open class ImageDownloader: @unchecked Sendable {
                     let imageResult = result.map { ImageLoadingResult(image: $0, url: context.url, originalData: data) }
                     let queue = callback.options.callbackQueue
                     queue.execute { callback.onCompleted?.call(imageResult) }
+                    self.imageDataProcessorMap.removeValue(forKey: taskKey)
                 }
                 processor.process()
 
