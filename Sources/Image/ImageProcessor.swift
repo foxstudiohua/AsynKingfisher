@@ -114,7 +114,8 @@ struct GeneralProcessor: ImageProcessor {
     }
 
     func processAsync(item: ImageProcessItem, options: KingfisherParsedOptionsInfo, handle: ((KFCrossPlatformImage?) -> Void)?) {
-
+        let image = self.process(item: item, options: options)
+        handle?(image)
     }
 }
 
@@ -146,7 +147,8 @@ public struct DefaultImageProcessor: ImageProcessor {
     }
 
     public func processAsync(item: ImageProcessItem, options: KingfisherParsedOptionsInfo, handle: ((KFCrossPlatformImage?) -> Void)?) {
-
+        let image = self.process(item: item, options: options)
+        handle?(image)
     }
 }
 
@@ -234,7 +236,8 @@ public struct BlendImageProcessor: ImageProcessor {
     }
 
     public func processAsync(item: ImageProcessItem, options: KingfisherParsedOptionsInfo, handle: ((KFCrossPlatformImage?) -> Void)?) {
-
+        let image = self.process(item: item, options: options)
+        handle?(image)
     }
 }
 #endif
@@ -442,7 +445,8 @@ public struct RoundCornerImageProcessor: ImageProcessor {
     }
 
     public func processAsync(item: ImageProcessItem, options: KingfisherParsedOptionsInfo, handle: ((KFCrossPlatformImage?) -> Void)?) {
-
+        let image = self.process(item: item, options: options)
+        handle?(image)
     }
 }
 
@@ -515,7 +519,8 @@ public struct BorderImageProcessor: ImageProcessor {
     }
 
     public func processAsync(item: ImageProcessItem, options: KingfisherParsedOptionsInfo, handle: ((KFCrossPlatformImage?) -> Void)?) {
-
+        let image = self.process(item: item, options: options)
+        handle?(image)
     }
 }
 
@@ -579,7 +584,8 @@ public struct ResizingImageProcessor: ImageProcessor {
     }
 
     public func processAsync(item: ImageProcessItem, options: KingfisherParsedOptionsInfo, handle: ((KFCrossPlatformImage?) -> Void)?) {
-
+        let image = self.process(item: item, options: options)
+        handle?(image)
     }
 }
 
@@ -614,7 +620,8 @@ public struct BlurImageProcessor: ImageProcessor {
     }
 
     public func processAsync(item: ImageProcessItem, options: KingfisherParsedOptionsInfo, handle: ((KFCrossPlatformImage?) -> Void)?) {
-
+        let image = self.process(item: item, options: options)
+        handle?(image)
     }
 }
 
@@ -654,7 +661,8 @@ public struct OverlayImageProcessor: ImageProcessor {
     }
 
     public func processAsync(item: ImageProcessItem, options: KingfisherParsedOptionsInfo, handle: ((KFCrossPlatformImage?) -> Void)?) {
-
+        let image = self.process(item: item, options: options)
+        handle?(image)
     }
 }
 
@@ -689,7 +697,8 @@ public struct TintImageProcessor: ImageProcessor {
     }
 
     public func processAsync(item: ImageProcessItem, options: KingfisherParsedOptionsInfo, handle: ((KFCrossPlatformImage?) -> Void)?) {
-
+        let image = self.process(item: item, options: options)
+        handle?(image)
     }
 }
 
@@ -740,7 +749,8 @@ public struct ColorControlsProcessor: ImageProcessor {
     }
 
     public func processAsync(item: ImageProcessItem, options: KingfisherParsedOptionsInfo, handle: ((KFCrossPlatformImage?) -> Void)?) {
-
+        let image = self.process(item: item, options: options)
+        handle?(image)
     }
 }
 
@@ -762,7 +772,8 @@ public struct BlackWhiteProcessor: ImageProcessor {
     }
 
     public func processAsync(item: ImageProcessItem, options: KingfisherParsedOptionsInfo, handle: ((KFCrossPlatformImage?) -> Void)?) {
-
+        let image = self.process(item: item, options: options)
+        handle?(image)
     }
 }
 
@@ -820,7 +831,8 @@ public struct CroppingImageProcessor: ImageProcessor {
     }
 
     public func processAsync(item: ImageProcessItem, options: KingfisherParsedOptionsInfo, handle: ((KFCrossPlatformImage?) -> Void)?) {
-
+        let image = self.process(item: item, options: options)
+        handle?(image)
     }
 }
 
@@ -868,7 +880,8 @@ public struct DownsamplingImageProcessor: ImageProcessor {
     }
 
     public func processAsync(item: ImageProcessItem, options: KingfisherParsedOptionsInfo, handle: ((KFCrossPlatformImage?) -> Void)?) {
-
+        let image = self.process(item: item, options: options)
+        handle?(image)
     }
 }
 
