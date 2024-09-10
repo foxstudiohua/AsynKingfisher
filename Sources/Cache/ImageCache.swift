@@ -701,8 +701,12 @@ open class ImageCache: @unchecked Sendable {
                         }
                         callbackQueue.execute { [image] in completionHandler(.success(image)) }
                     }
+                } else {
+                    if options.backgroundDecode {
+                        image = image?.kf.decoded(scale: options.scaleFactor)
+                    }
+                    callbackQueue.execute { [image] in completionHandler(.success(image)) }
                 }
-
             } catch let error as KingfisherError {
                 callbackQueue.execute { completionHandler(.failure(error)) }
             } catch {
